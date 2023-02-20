@@ -4,8 +4,7 @@ import Cart from "./components/Cart/Cart";
 import Layout from "./components/Layout/Layout";
 import Products from "./components/Shop/Products";
 import Notification from "./components/UI/Notification";
-import { sendCartData } from "./store/cart-slice";
-import { uiActions } from "./store/ui-slice";
+import { fetchCartData, sendCartData } from "./store/cart-actions";
 
 let isInitial = true;
 
@@ -15,14 +14,22 @@ function App() {
   const cart = useSelector((state) => state.cart);
   const notification = useSelector((state) => state.ui.notification);
 
+  //For fetching data
+  useEffect(() => {
+    dispatch(fetchCartData());
+  }, [dispatch]);
+
+  //for storing data
   useEffect(() => {
     if (isInitial) {
       isInitial = false;
       return;
     }
-    /*redux toolkit give us the possibility to dispatch an action creator
-    not only a reducer function*/
-    dispatch(sendCartData(cart));
+    if (cart.changed)
+      /*redux toolkit give us the possibility to dispatch an action creator
+    not only a reducer function
+    less logic code in the component*/
+      dispatch(sendCartData(cart));
   }, [cart, dispatch]);
 
   /*Put the logic in the component
